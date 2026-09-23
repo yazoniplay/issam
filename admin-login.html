@@ -1,19 +1,40 @@
 <!DOCTYPE html>
 <html>
-<head><title>ISSAW Admin Login</title><link rel="stylesheet" href="style.css"></head>
+<head>
+<title>IssamExprec Admin Login</title>
+<link rel="stylesheet" href="style.css">
+</head>
 <body class="admin-page">
 <div class="card login-card">
-<h1>Admin Login</h1>
-<input id="user" placeholder="Username">
-<input id="pass" type="password" placeholder="Password">
-<button onclick="login()">Login</button>
+<h1>IssamExprec Admin</h1>
+<input id="email" type="email" placeholder="Admin email">
+<input id="password" type="password" placeholder="Password">
+<button id="loginBtn">Login</button>
 <p id="error"></p>
 </div>
-<script>
-function login(){
- if(user.value==='issawadmin' && pass.value==='change-this-password'){
- localStorage.admin='true';location.href='admin.html';
- } else error.innerText='Invalid login';
+
+<script type="module">
+import supabaseClient from './supabase.js';
+
+const email = document.getElementById('email');
+const password = document.getElementById('password');
+const error = document.getElementById('error');
+
+async function login(){
+ const { error: loginError } = await supabaseClient.auth.signInWithPassword({
+  email: email.value,
+  password: password.value
+ });
+
+ if(loginError){
+  error.innerText = loginError.message;
+  return;
+ }
+
+ window.location.href = 'admin.html';
 }
+
+document.getElementById('loginBtn').onclick = login;
 </script>
-</body></html>
+</body>
+</html>
