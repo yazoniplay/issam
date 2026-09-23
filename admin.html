@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html>
-<head><title>ISSAW Dashboard</title><link rel="stylesheet" href="style.css"></head>
+<head><title>IssamExprec Admin</title><link rel="stylesheet" href="style.css"></head>
 <body>
-<header><div class="logo">ISSAW ADMIN</div></header>
+<header><div class="logo">IssamExprec ADMIN</div></header>
 <section class="dashboard">
 <div class="card">
 <h2>Add Product</h2>
@@ -14,20 +14,27 @@
 </div>
 <div class="card"><h2>Products</h2><div id="list"></div></div>
 </section>
-<script>
+<script type="module">
+import { supabase } from './supabase.js';
 if(localStorage.admin!=='true') location.href='admin-login.html';
-function addProduct(){
+
+async function addProduct(){
  const file=image.files[0];
- const reader=new FileReader();
- reader.onload=()=>{
- let products=JSON.parse(localStorage.products||'[]');
- products.push({name:name.value,price:price.value,brand:brand.value,image:reader.result});
- localStorage.products=JSON.stringify(products);render();
- };
- if(file) reader.readAsDataURL(file);
+ let imageUrl='';
+ if(file){
+  const path=Date.now()+'-'+file.name;
+  await supabase.storage.from('product-images').upload(path,file);
+  imageUrl=supabase.storage.from('product-images').getPublicUrl(path).data.publicUrl;
+ }
+ await supabase.from('products').insert({name:name.value,price:Number(price.value),brand:brand.value,image_url:imageUrl});
+ render();
 }
-function render(){list.innerHTML='';JSON.parse(localStorage.products||'[]').forEach((p,i)=>{list.innerHTML+=`<div class='card'><img src='${p.image||''}' width='100'><h3>${p.name}</h3><p>${p.brand} - ${p.price}</p><button onclick="remove(${i})">Delete</button></div>`})}
-function remove(i){let p=JSON.parse(localStorage.products);p.splice(i,1);localStorage.products=JSON.stringify(p);render()}
+window.addProduct=addProduct;
+
+async function render(){
+ const {data}=await supabase.from('products').select('*');
+ list.innerHTML=(data||[]).map(p=>`<div class='card'><img src='${p.image_url}' width='100'><h3>${p.name}</h3><p>${p.brand} - ${p.price}</p></div>`).join('');
+}
 render();
 </script>
 </body></html>
