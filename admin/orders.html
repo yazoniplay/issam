@@ -1,10 +1,19 @@
 <!DOCTYPE html>
 <html>
 <head><title>IssamExprec Orders</title></head>
-<body>
+<body style="font-family:Arial;padding:30px;background:#f7f7f7">
 <h1>Order Manager</h1>
-<p>View and manage customer orders here.</p>
+<div id="orders"></div>
 <a href="dashboard.html">Back</a>
 <script src="../supabase.js"></script>
+<script>
+async function loadOrders(){
+ const {data,error}=await supabase.from('orders').select('*').order('created_at',{ascending:false});
+ if(error)return alert(error.message);
+ document.getElementById('orders').innerHTML=(data||[]).map(o=>`<div style="background:white;padding:20px;margin:15px;border-radius:16px"><h3>Order ${o.id}</h3><p>${o.customer_name}</p><p>${o.email||''}</p><p>${o.total} SEK</p><select onchange="status('${o.id}',this.value)"><option ${o.status==='Pending'?'selected':''}>Pending</option><option ${o.status==='Processing'?'selected':''}>Processing</option><option ${o.status==='Shipped'?'selected':''}>Shipped</option><option ${o.status==='Delivered'?'selected':''}>Delivered</option></select></div>`).join('')||'No orders';
+}
+async function status(id,value){await supabase.from('orders').update({status:value}).eq('id',id);}
+loadOrders();
+</script>
 </body>
 </html>
