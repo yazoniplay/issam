@@ -1,10 +1,31 @@
 <!DOCTYPE html>
 <html>
-<head><title>IssamExprec Products</title></head>
+<head>
+<title>IssamExprec Products</title>
+<style>
+body{font-family:Arial;padding:30px;background:#f7f7f7} .card{background:white;padding:20px;border-radius:16px;margin:15px 0}
+input,button{padding:10px;margin:5px;border-radius:8px}
+</style>
+</head>
 <body>
 <h1>Product Manager</h1>
-<p>Add, edit and manage products here.</p>
+<div class="card">
+<input id="search" placeholder="Search products...">
+<button onclick="loadProducts()">Search</button>
+</div>
+<div id="products"></div>
 <a href="dashboard.html">Back</a>
 <script src="../supabase.js"></script>
+<script>
+async function loadProducts(){
+ const q=document.getElementById('search').value.toLowerCase();
+ const {data,error}=await supabase.from('products').select('*').order('created_at',{ascending:false});
+ if(error)return alert(error.message);
+ document.getElementById('products').innerHTML=(data||[]).filter(p=>JSON.stringify(p).toLowerCase().includes(q)).map(p=>`
+ <div class="card"><h3>${p.name}</h3><p>${p.brand||''}</p><p>${p.price} SEK</p><p>Stock: ${p.stock||0}</p><button onclick="removeProduct('${p.id}')">Delete</button></div>`).join('')||'<p>No products</p>';
+}
+async function removeProduct(id){await supabase.from('products').delete().eq('id',id);loadProducts();}
+loadProducts();
+</script>
 </body>
 </html>
