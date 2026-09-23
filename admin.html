@@ -31,32 +31,34 @@
 <script type="module">
 import supabase from './supabase.js';
 
-const sessionCheck = async () => {
- const { data } = await supabase.auth.getSession();
- if (!data.session) {
-   window.location.href = 'admin-login.html';
+async function protectAdmin(){
+ const {data:{session}} = await supabase.auth.getSession();
+ if(!session){
+   location.href='admin-login.html';
+   return false;
  }
-};
+ return true;
+}
 
-await sessionCheck();
+if(!(await protectAdmin())) throw new Error('Unauthorized');
 
 async function logout(){
  await supabase.auth.signOut();
- window.location.href='admin-login.html';
+ location.href='admin-login.html';
 }
 window.logout = logout;
 
 async function uploadImage(file){
  if(!file) return '';
- const path=Date.now()+'-'+file.name;
- const {error}=await supabase.storage.from('product-images').upload(path,file);
+ const path = Date.now() + '-' + file.name;
+ const {error} = await supabase.storage.from('product-images').upload(path,file);
  if(error) throw error;
  return supabase.storage.from('product-images').getPublicUrl(path).data.publicUrl;
 }
 
 async function addProduct(){
- const imageUrl=await uploadImage(image.files[0]);
- await supabase.from('products').insert({
+ const imageUrl = await uploadImage(image.files[0]);
+ const {error} = await supabase.from('products').insert({
   name:name.value,
   price:Number(price.value),
   brand:brand.value,
@@ -64,34 +66,42 @@ async function addProduct(){
   category:category.value,
   image_url:imageUrl
  });
- render();
+
+ if(error) alert(error.message);
+ else render();
 }
-window.addProduct=addProduct;
+window.addProduct = addProduct;
 
 async function removeProduct(id){
+ if(!confirm('Delete this product?')) return;
  await supabase.from('products').delete().eq('id',id);
  render();
 }
-window.removeProduct=removeProduct;
+window.removeProduct = removeProduct;
 
 async function editProduct(id){
- const newPrice=prompt('New price:');
+ const newPrice = prompt('New price:');
  if(newPrice){
   await supabase.from('products').update({price:Number(newPrice)}).eq('id',id);
   render();
  }
 }
-window.editProduct=editProduct;
+window.editProduct = editProduct;
 
 async function render(){
- const {data}=await supabase.from('products').select('*').order('created_at',{ascending:false});
+ const {data,error} = await supabase.from('products').select('*').order('created_at',{ascending:false});
+ if(error){
+  list.innerHTML = error.message;
+  return;
+ }
+
  list.innerHTML=(data||[]).map(p=>`
  <div class="card">
- <img src="${p.image_url||''}" width="100">
- <h3>${p.name}</h3>
- <p>${p.brand||''} - ${p.price} SEK</p>
- <button onclick="editProduct('${p.id}')">Edit Price</button>
- <button onclick="removeProduct('${p.id}')">Delete</button>
+  <img src="${p.image_url||''}" width="100">
+  <h3>${p.name}</h3>
+  <p>${p.brand||''} - ${p.price} SEK</p>
+  <button onclick="editProduct('${p.id}')">Edit Price</button>
+  <button onclick="removeProduct('${p.id}')">Delete</button>
  </div>`).join('');
 }
 
