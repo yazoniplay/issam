@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html><head><title>Order Manager</title><link rel="stylesheet" href="style.css"></head>
+<body>
+<section class="hero"><h1>Order Manager</h1></section>
+<section id="orders"></section>
+<script>
+let orders=JSON.parse(localStorage.getItem('orders'))||[];
+let box=document.getElementById('orders');
+function render(){
+ box.innerHTML=orders.map((o,i)=>`<div class="card"><h2>Order #${o.id}</h2><p>${o.date}</p><p>Status: <b>${o.status}</b></p><p>${o.items.map(x=>x.name).join(', ')}</p><button onclick="change(${i})">Mark shipped</button><button onclick="removeOrder(${i})">Delete</button></div>`).join('')||'<h2>No orders yet</h2>';
+}
+function change(i){orders[i].status='Shipped';save()}
+function removeOrder(i){orders.splice(i,1);save()}
+function save(){localStorage.setItem('orders',JSON.stringify(orders));render()}
+render();
+</script>
+</body></html>
