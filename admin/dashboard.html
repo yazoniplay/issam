@@ -1,12 +1,39 @@
 <!DOCTYPE html>
 <html>
-<head><title>IssamExprec Admin Dashboard</title></head>
+<head>
+<title>IssamExprec Admin Dashboard</title>
+<style>
+body{font-family:Arial,sans-serif;padding:30px;background:#f7f7f7}
+.card{display:inline-block;background:white;padding:25px;margin:10px;border-radius:16px;min-width:180px}
+nav a{margin-right:20px}
+</style>
+</head>
 <body>
 <h1>IssamExprec Admin Dashboard</h1>
 <nav>
 <a href="products.html">Products</a>
 <a href="orders.html">Orders</a>
 </nav>
+
+<div class="card"><h3>Products</h3><p id="products">Loading...</p></div>
+<div class="card"><h3>Orders</h3><p id="orders">Loading...</p></div>
+<div class="card"><h3>Revenue</h3><p id="revenue">Loading...</p></div>
+
+<h2>Recent Orders</h2>
+<div id="recent">Loading...</div>
+
 <script src="../supabase.js"></script>
+<script>
+async function loadDashboard(){
+ const {data:products}=await supabase.from('products').select('id');
+ const {data:orders}=await supabase.from('orders').select('*').order('created_at',{ascending:false});
+ document.getElementById('products').textContent=products?.length||0;
+ document.getElementById('orders').textContent=orders?.length||0;
+ const revenue=(orders||[]).reduce((sum,o)=>sum+Number(o.total||0),0);
+ document.getElementById('revenue').textContent=revenue+' kr';
+ document.getElementById('recent').innerHTML=(orders||[]).slice(0,5).map(o=>`<p>${o.customer_name} - ${o.status} - ${o.total} kr</p>`).join('')||'No orders yet';
+}
+loadDashboard();
+</script>
 </body>
 </html>
