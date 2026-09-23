@@ -1,1 +1,33 @@
-<!DOCTYPE html><html><head><title>ISSAW Admin</title><link rel="stylesheet" href="style.css"></head><body><section class="hero"><h1>Admin Panel</h1></section><section class="products"><div class="card"><h2>Add Product</h2><input id="name" placeholder="Product name"><input id="price" placeholder="Price"><input id="brand" placeholder="Brand"><button onclick="addProduct()">Add Product</button></div></section><script>function addProduct(){let p=JSON.parse(localStorage.products||'[]');p.push({name:name.value,price:price.value,brand:brand.value});localStorage.products=JSON.stringify(p);alert('Product added')}</script></body></html>
+<!DOCTYPE html>
+<html>
+<head><title>ISSAW Dashboard</title><link rel="stylesheet" href="style.css"></head>
+<body>
+<header><div class="logo">ISSAW ADMIN</div></header>
+<section class="dashboard">
+<div class="card">
+<h2>Add Product</h2>
+<input id="name" placeholder="Product name">
+<input id="price" placeholder="Price">
+<input id="brand" placeholder="Brand">
+<input id="image" type="file" accept="image/*">
+<button onclick="addProduct()">Upload Product</button>
+</div>
+<div class="card"><h2>Products</h2><div id="list"></div></div>
+</section>
+<script>
+if(localStorage.admin!=='true') location.href='admin-login.html';
+function addProduct(){
+ const file=image.files[0];
+ const reader=new FileReader();
+ reader.onload=()=>{
+ let products=JSON.parse(localStorage.products||'[]');
+ products.push({name:name.value,price:price.value,brand:brand.value,image:reader.result});
+ localStorage.products=JSON.stringify(products);render();
+ };
+ if(file) reader.readAsDataURL(file);
+}
+function render(){list.innerHTML='';JSON.parse(localStorage.products||'[]').forEach((p,i)=>{list.innerHTML+=`<div class='card'><img src='${p.image||''}' width='100'><h3>${p.name}</h3><p>${p.brand} - ${p.price}</p><button onclick="remove(${i})">Delete</button></div>`})}
+function remove(i){let p=JSON.parse(localStorage.products);p.splice(i,1);localStorage.products=JSON.stringify(p);render()}
+render();
+</script>
+</body></html>
