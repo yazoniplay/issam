@@ -12,18 +12,21 @@
 
 <section class="dashboard">
 <div class="card">
-<h2>Add Product</h2>
+<h2 id="formTitle">Add Product</h2>
 <input id="name" placeholder="Product name">
 <input id="price" placeholder="Price">
+<input id="stock" placeholder="Stock quantity" type="number">
 <input id="brand" placeholder="Brand">
 <input id="description" placeholder="Description">
 <input id="category" placeholder="Category">
 <input id="image" type="file" accept="image/*">
-<button onclick="addProduct()">Upload Product</button>
+<button onclick="saveProduct()">Save Product</button>
+<button onclick="resetForm()">Cancel</button>
 </div>
 
 <div class="card">
 <h2>Products</h2>
+<input id="search" placeholder="Search products..." oninput="render()">
 <div id="list"></div>
 </div>
 </section>
@@ -31,78 +34,101 @@
 <script type="module">
 import supabase from './supabase.js';
 
-async function protectAdmin(){
- const {data:{session}} = await supabase.auth.getSession();
- if(!session){
-   location.href='admin-login.html';
-   return false;
- }
- return true;
-}
+let products=[];
+let editingId=null;
 
-if(!(await protectAdmin())) throw new Error('Unauthorized');
+async function protectAdmin(){
+ const {data:{session}}=await supabase.auth.getSession();
+ if(!session) location.href='admin-login.html';
+}
+await protectAdmin();
 
 async function logout(){
  await supabase.auth.signOut();
  location.href='admin-login.html';
 }
-window.logout = logout;
+window.logout=logout;
 
 async function uploadImage(file){
- if(!file) return '';
- const path = Date.now() + '-' + file.name;
- const {error} = await supabase.storage.from('product-images').upload(path,file);
+ if(!file) return null;
+ const path=Date.now()+'-'+file.name;
+ const {error}=await supabase.storage.from('product-images').upload(path,file);
  if(error) throw error;
  return supabase.storage.from('product-images').getPublicUrl(path).data.publicUrl;
 }
 
-async function addProduct(){
- const imageUrl = await uploadImage(image.files[0]);
- const {error} = await supabase.from('products').insert({
+async function saveProduct(){
+ let imageUrl=null;
+ if(image.files[0]) imageUrl=await uploadImage(image.files[0]);
+
+ const product={
   name:name.value,
   price:Number(price.value),
+  stock:Number(stock.value||0),
   brand:brand.value,
   description:description.value,
-  category:category.value,
-  image_url:imageUrl
- });
+  category:category.value
+ };
 
- if(error) alert(error.message);
- else render();
+ if(imageUrl) product.image_url=imageUrl;
+
+ let result;
+ if(editingId){
+  result=await supabase.from('products').update(product).eq('id',editingId);
+ } else {
+  result=await supabase.from('products').insert(product);
+ }
+
+ if(result.error) alert(result.error.message);
+ resetForm();
+ render();
 }
-window.addProduct = addProduct;
+window.saveProduct=saveProduct;
+
+async function editProduct(id){
+ const p=products.find(x=>x.id===id);
+ editingId=id;
+ name.value=p.name||'';
+ price.value=p.price||'';
+ stock.value=p.stock||0;
+ brand.value=p.brand||'';
+ description.value=p.description||'';
+ category.value=p.category||'';
+ document.getElementById('formTitle').innerText='Edit Product';
+}
+window.editProduct=editProduct;
 
 async function removeProduct(id){
+ const p=products.find(x=>x.id===id);
  if(!confirm('Delete this product?')) return;
  await supabase.from('products').delete().eq('id',id);
  render();
 }
-window.removeProduct = removeProduct;
+window.removeProduct=removeProduct;
 
-async function editProduct(id){
- const newPrice = prompt('New price:');
- if(newPrice){
-  await supabase.from('products').update({price:Number(newPrice)}).eq('id',id);
-  render();
- }
+function resetForm(){
+ editingId=null;
+ name.value='';price.value='';stock.value='';brand.value='';description.value='';category.value='';image.value='';
+ document.getElementById('formTitle').innerText='Add Product';
 }
-window.editProduct = editProduct;
+window.resetForm=resetForm;
 
 async function render(){
- const {data,error} = await supabase.from('products').select('*').order('created_at',{ascending:false});
- if(error){
-  list.innerHTML = error.message;
-  return;
- }
+ const {data,error}=await supabase.from('products').select('*').order('created_at',{ascending:false});
+ if(error){list.innerHTML=error.message;return;}
+ products=data||[];
+ const query=search.value.toLowerCase();
+ const filtered=products.filter(p=>(p.name+' '+p.brand).toLowerCase().includes(query));
 
- list.innerHTML=(data||[]).map(p=>`
+ list.innerHTML=filtered.map(p=>`
  <div class="card">
-  <img src="${p.image_url||''}" width="100">
-  <h3>${p.name}</h3>
-  <p>${p.brand||''} - ${p.price} SEK</p>
-  <button onclick="editProduct('${p.id}')">Edit Price</button>
-  <button onclick="removeProduct('${p.id}')">Delete</button>
- </div>`).join('');
+ <img src="${p.image_url||''}" width="100">
+ <h3>${p.name}</h3>
+ <p>${p.brand||''} - ${p.price} SEK</p>
+ <p>Stock: ${p.stock||0}</p>
+ <button onclick="editProduct('${p.id}')">Edit</button>
+ <button onclick="removeProduct('${p.id}')">Delete</button>
+ </div>`).join('') || '<p>No products</p>';
 }
 
 render();
