@@ -7,16 +7,16 @@
 <body>
 <header><a class="logo" href="index.html">IssamExprec</a><nav><a href="shop.html">Shop</a><a href="cart.html">Cart</a></nav></header>
 <main class="product-page">
-<section id="product" class="product-detail"></section>
+<section id="product" class="product-detail card"></section>
 </main>
 <script src="products.js"></script>
 <script>
 const params=new URLSearchParams(location.search);
 const id=params.get('id');
-const product=getProducts().find(p=>p.id==id);
+const product=getProducts().find(p=>p.id==id || p.name==id);
 const area=document.getElementById('product');
 if(product){
-area.innerHTML=`<img class="product-image" src="${product.image}"><div><p>${product.brand||''}</p><h1>${product.name}</h1><h2>${product.price}</h2><p>${product.description||'Premium sportswear product.'}</p><button class="btn" onclick="addCart('${product.name}')">Add to cart</button></div>`;
+area.innerHTML=`<img class="product-image" src="${product.image_url||product.image||''}"><div><p>${product.brand||''}</p><h1>${product.name}</h1><h2>${product.price} SEK</h2><p>${product.description||'Premium sportswear product.'}</p><button class="btn" onclick="addToCart(${getProducts().indexOf(product)})">Add to cart</button></div>`;
 }else{area.innerHTML='<h1>Product not found</h1>'}
 </script>
 </body>
