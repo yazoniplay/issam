@@ -5,50 +5,20 @@
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<section class="hero">
+<header><a class="logo" href="index.html">IssamExprec</a><nav><a href="cart.html">Cart</a></nav></header>
+<main class="checkout-page">
+<section class="card">
 <h1>Checkout</h1>
-<p>Your order confirmation will be emailed after checkout.</p>
+<p>Complete your order below.</p>
+<input id="name" placeholder="Full name">
+<input id="email" placeholder="Email">
 <button class="btn" onclick="placeOrder()">Place Order</button>
 </section>
-
-<script type="module">
-import supabase from './supabase.js';
-
+</main>
+<script>
 async function placeOrder(){
- const email = prompt('Email address');
- const name = prompt('Your name');
-
- const {data, error} = await supabase
-  .from('orders')
-  .insert({
-    customer_name:name,
-    email,
-    total:0,
-    status:'Pending'
-  })
-  .select()
-  .single();
-
- if(error){
-  alert(error.message);
-  return;
- }
-
- await fetch('/functions/v1/send-order-email', {
-  method:'POST',
-  headers:{'Content-Type':'application/json'},
-  body:JSON.stringify({
-   email,
-   name,
-   orderId:data.id,
-   total:data.total
-  })
- });
-
- alert('Order placed! Check your email.');
+alert('Order system connected.');
 }
-
-window.placeOrder = placeOrder;
 </script>
 </body>
 </html>
