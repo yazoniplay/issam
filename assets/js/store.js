@@ -18,7 +18,7 @@ export async function loadProducts(target = '#products') {
   products = data || [];
 
   area.innerHTML = products.map(product => `
-    <article class="card product" onclick="window.location.href='product.html?id=${product.id}'">
+    <article class="card product fade" onclick="window.location.href='product.html?id=${product.id}'">
       <img src="${product.image_url || ''}" alt="${product.name}">
       <p>${product.brand || ''}</p>
       <h2>${product.name}</h2>
@@ -61,6 +61,9 @@ function updateCartBadge() {
 }
 
 function showCartToast() {
+  const existingToast = document.querySelector('.cart-toast');
+  if (existingToast) existingToast.remove();
+
   const toast = document.createElement('div');
   toast.className = 'cart-toast';
   toast.textContent = 'Added to cart';
