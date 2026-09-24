@@ -1,6 +1,8 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>IssamExprec | Shop</title>
 <link rel="stylesheet" href="assets/css/style.css">
 </head>
@@ -10,34 +12,57 @@
 <nav>
 <a href="index.html">Home</a>
 <a href="shop.html">Shop</a>
-<a href="cart.html">Cart <span id="cart-count">0</span></a>
+<a href="cart.html">Cart <span class="cart-count" id="cart-count">0</span></a>
 </nav>
 </header>
 
-<main class="shop-page">
-<section class="shop-hero fade">
-<h1>Sportswear Collection</h1>
-<p>Premium Under Armour and Umbro products.</p>
+<main class="catalog-page">
+<section class="catalog-hero fade">
+<h1>Shop The Collection</h1>
+<p>Premium Under Armour & Umbro sportswear built for training, football and everyday movement.</p>
+<div class="catalog-controls">
 <input id="search" placeholder="Search products...">
+<div class="filters">
+<button class="filter active" data-brand="all">All</button>
+<button class="filter" data-brand="Under Armour">Under Armour</button>
+<button class="filter" data-brand="Umbro">Umbro</button>
+</div>
+</div>
 </section>
 
-<section class="collection">
-<h2>Latest Products</h2>
-<div class="products" id="products"></div>
+<section class="catalog-section">
+<div class="catalog-header">
+<h2>All Products</h2>
+<span id="product-count"></span>
+</div>
+<div class="product-grid" id="products"></div>
 </section>
 </main>
 
 <script src="assets/js/store.js"></script>
 <script>
+let activeBrand='all';
 const search=document.getElementById('search');
-if(search){
- search.addEventListener('input',e=>{
-  const value=e.target.value.toLowerCase();
-  document.querySelectorAll('.product').forEach(card=>{
-   card.style.display=card.textContent.toLowerCase().includes(value)?'':'none';
-  });
+
+function filterProducts(){
+ const value=search.value.toLowerCase();
+ document.querySelectorAll('.product').forEach(card=>{
+  const text=card.textContent.toLowerCase();
+  const brand=activeBrand==='all'||text.includes(activeBrand.toLowerCase());
+  card.style.display=brand&&text.includes(value)?'':'none';
  });
 }
+
+search.addEventListener('input',filterProducts);
+
+document.querySelectorAll('.filter').forEach(btn=>{
+ btn.addEventListener('click',()=>{
+  activeBrand=btn.dataset.brand;
+  document.querySelectorAll('.filter').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  filterProducts();
+ });
+});
 </script>
 </body>
 </html>
