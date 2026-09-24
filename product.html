@@ -5,8 +5,19 @@
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<header><a href="index.html">IssamExprec</a><nav><a href="shop.html">Shop</a><a href="cart.html">Cart</a></nav></header>
-<main id="product"></main>
+<header><a class="logo" href="index.html">IssamExprec</a><nav><a href="shop.html">Shop</a><a href="cart.html">Cart</a></nav></header>
+<main class="product-page">
+<section id="product" class="product-detail"></section>
+</main>
 <script src="products.js"></script>
+<script>
+const params=new URLSearchParams(location.search);
+const id=params.get('id');
+const product=getProducts().find(p=>p.id==id);
+const area=document.getElementById('product');
+if(product){
+area.innerHTML=`<img class="product-image" src="${product.image}"><div><p>${product.brand||''}</p><h1>${product.name}</h1><h2>${product.price}</h2><p>${product.description||'Premium sportswear product.'}</p><button class="btn" onclick="addCart('${product.name}')">Add to cart</button></div>`;
+}else{area.innerHTML='<h1>Product not found</h1>'}
+</script>
 </body>
 </html>
