@@ -2,10 +2,14 @@
 <html>
 <head>
 <title>IssamExprec Checkout</title>
-<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="assets/css/style.css">
 </head>
 <body>
-<header><a class="logo" href="index.html">IssamExprec</a><nav><a href="cart.html">Cart</a></nav></header>
+<header class="navbar">
+<a class="logo" href="index.html">IssamExprec</a>
+<nav><a href="cart.html">Cart</a></nav>
+</header>
+
 <main class="checkout-page">
 <section class="card">
 <h1>Checkout</h1>
@@ -17,7 +21,8 @@
 <button class="btn" onclick="placeOrder()">Place Order</button>
 </section>
 </main>
-<script src="script.js"></script>
+
+<script src="assets/js/store.js"></script>
 <script>
 async function placeOrder(){
  const customer={
