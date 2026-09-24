@@ -30,6 +30,19 @@ a{text-decoration:none;color:inherit}
 .navbar nav{display:flex;gap:32px}
 .navbar a:hover{opacity:.6}
 
+.cart-count{
+ display:inline-flex;
+ align-items:center;
+ justify-content:center;
+ min-width:20px;
+ height:20px;
+ padding:0 6px;
+ border-radius:999px;
+ background:#000;
+ color:#fff;
+ font-size:12px;
+}
+
 .hero{
  min-height:85vh;
  padding:8% 7%;
@@ -39,43 +52,32 @@ a{text-decoration:none;color:inherit}
  color:white;
  overflow:hidden;
 }
-.hero h1{
- font-size:clamp(55px,8vw,110px);
- line-height:.9;
- margin:0 0 25px;
- letter-spacing:-5px;
-}
+.hero h1{font-size:clamp(55px,8vw,110px);line-height:.9;margin:0 0 25px;letter-spacing:-5px}
 .hero p{font-size:22px;color:#ddd;max-width:500px}
-.btn{
- display:inline-block;
- margin-top:30px;
- background:white;
- color:black;
- padding:16px 32px;
- border-radius:999px;
- transition:.3s;
-}
+.btn{display:inline-block;margin-top:30px;background:white;color:black;padding:16px 32px;border-radius:999px;transition:.3s;border:none;cursor:pointer}
 .btn:hover{transform:translateY(-4px)}
 
-.section{
- padding:80px 7%;
-}
-.grid{
- display:grid;
- grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
- gap:25px;
-}
-.card{
- background:white;
- border-radius:28px;
- padding:25px;
- transition:.3s;
- box-shadow:0 15px 40px rgba(0,0,0,.05);
-}
+.section{padding:80px 7%}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:25px}
+.card{background:white;border-radius:28px;padding:25px;transition:.3s;box-shadow:0 15px 40px rgba(0,0,0,.05)}
 .card:hover{transform:translateY(-8px)}
 
-.fade{animation:fade .5s ease}
-@keyframes fade{
+.cart-toast{
+ position:fixed;
+ right:30px;
+ bottom:30px;
+ background:#111;
+ color:white;
+ padding:16px 25px;
+ border-radius:999px;
+ animation:toast .3s ease;
+ z-index:100;
+}
+
+@keyframes toast{
  from{opacity:0;transform:translateY(20px)}
  to{opacity:1;transform:none}
 }
+
+.fade{animation:fade .5s ease}
+@keyframes fade{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:none}}
