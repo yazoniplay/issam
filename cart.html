@@ -7,10 +7,25 @@
 <body>
 <header><a class="logo" href="index.html">IssamExprec</a><nav><a href="shop.html">Shop</a><a href="cart.html">Cart</a></nav></header>
 <main class="cart-page">
-<h1>Your Cart</h1>
+<section class="title">
+<h1>Your Shopping Bag</h1>
+<p>Review your sportswear before checkout.</p>
+</section>
 <div id="cart" class="products"></div>
-<a class="btn" href="checkout.html">Checkout</a>
+<a class="btn" href="checkout.html">Continue to Checkout</a>
 </main>
+<script>
+const cart=document.getElementById('cart');
+const items=JSON.parse(localStorage.getItem('cart')||'[]');
+cart.innerHTML=items.length ? items.map(p=>`
+<article class="card">
+<img src="${p.image_url||p.image||''}">
+<h2>${p.name}</h2>
+<p>${p.brand||''}</p>
+<p>${p.quantity||1} x ${p.price} SEK</p>
+<button onclick="removeFromCart('${p.id}')">Remove</button>
+</article>`).join('') : '<h2>Your cart is empty</h2>';
+</script>
 <script src="script.js"></script>
 </body>
 </html>
