@@ -18,12 +18,22 @@ export async function loadProducts(target = '#products') {
   products = data || [];
 
   area.innerHTML = products.map(product => `
-    <article class="card product fade" onclick="window.location.href='product.html?id=${product.id}'">
-      <img src="${product.image_url || ''}" alt="${product.name}">
-      <p>${product.brand || ''}</p>
-      <h2>${product.name}</h2>
-      <strong>${product.price} SEK</strong>
-      <button class="btn" onclick="event.stopPropagation(); window.addToCart('${product.id}')">Add to cart</button>
+    <article class="product fade" onclick="window.location.href='product.html?id=${product.id}'">
+      <div class="product-image">
+        ${product.sale ? '<span class="product-badge sale">Sale</span>' : ''}
+        ${product.new ? '<span class="product-badge">New</span>' : ''}
+        <img src="${product.image_url || ''}" alt="${product.name}">
+      </div>
+
+      <div class="product-info">
+        <span class="brand-badge">${product.brand || 'Sportswear'}</span>
+        <h3>${product.name}</h3>
+        <p class="category">${product.category || 'Performance wear'}</p>
+        <strong class="price">${product.price} SEK</strong>
+        <button class="quick-add" onclick="event.stopPropagation(); window.addToCart('${product.id}')">
+          Add to cart
+        </button>
+      </div>
     </article>
   `).join('');
 }
