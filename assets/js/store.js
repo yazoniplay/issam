@@ -5,6 +5,7 @@ let cart = JSON.parse(localStorage.getItem('cart') || '[]');
 
 function saveCart() {
   localStorage.setItem('cart', JSON.stringify(cart));
+  updateCartBadge();
 }
 
 export async function loadProducts(target = '#products') {
@@ -22,7 +23,7 @@ export async function loadProducts(target = '#products') {
       <p>${product.brand || ''}</p>
       <h2>${product.name}</h2>
       <strong>${product.price} SEK</strong>
-      <button onclick="event.stopPropagation(); window.addToCart('${product.id}')">Add to cart</button>
+      <button class="btn" onclick="event.stopPropagation(); window.addToCart('${product.id}')">Add to cart</button>
     </article>
   `).join('');
 }
@@ -52,6 +53,13 @@ window.updateQuantity = function(id, quantity) {
   location.reload();
 };
 
+function updateCartBadge() {
+  const count = cart.reduce((sum, item) => sum + (item.quantity || 1), 0);
+  document.querySelectorAll('.cart-count').forEach(el => {
+    el.textContent = count;
+  });
+}
+
 function showCartToast() {
   const toast = document.createElement('div');
   toast.className = 'cart-toast';
@@ -60,4 +68,5 @@ function showCartToast() {
   setTimeout(() => toast.remove(), 2000);
 }
 
+window.addEventListener('load', updateCartBadge);
 window.storeCart = cart;
