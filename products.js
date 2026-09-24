@@ -7,20 +7,40 @@ if (!products.length) {
  ]));
 }
 
-function getProducts(){return JSON.parse(localStorage.getItem('issaw_products')||'[]');}
+function getProducts(){
+ return JSON.parse(localStorage.getItem('issaw_products') || '[]');
+}
 
-function renderProducts(){
- const area=document.querySelector('.products');
+function renderProducts(list=getProducts()){
+ const area=document.querySelector('#products') || document.querySelector('.products');
  if(!area)return;
  area.innerHTML='';
- getProducts().forEach(p=>{
-  area.innerHTML+=`<article class="card product"><img src="${p.image}"><h2>${p.name}</h2><p>${p.brand}</p><strong>${p.price}</strong><button onclick="addCart('${p.name}')">Add to cart</button></article>`;
+ list.forEach((p,index)=>{
+  area.innerHTML += `
+  <article class="card product">
+   <img src="${p.image}" alt="${p.name}">
+   <p>${p.brand || ''}</p>
+   <h2>${p.name}</h2>
+   <strong>${p.price}</strong>
+   <button onclick="addCart('${p.name}')">Add to cart</button>
+  </article>`;
  });
 }
 
 function addCart(name){
- let cart=JSON.parse(localStorage.getItem('cart')||'[]');
- cart.push(name);localStorage.setItem('cart',JSON.stringify(cart));alert('Added to cart');
+ let cart=JSON.parse(localStorage.getItem('cart') || '[]');
+ cart.push(name);
+ localStorage.setItem('cart',JSON.stringify(cart));
+ alert('Added to cart');
 }
 
-document.addEventListener('DOMContentLoaded',renderProducts);
+document.addEventListener('DOMContentLoaded',()=>{
+ renderProducts();
+ const search=document.querySelector('#search');
+ if(search){
+  search.addEventListener('input',e=>{
+   const value=e.target.value.toLowerCase();
+   renderProducts(getProducts().filter(p=>(p.name+p.brand).toLowerCase().includes(value)));
+  });
+ }
+});
