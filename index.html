@@ -12,28 +12,48 @@
 <nav>
 <a href="index.html">Home</a>
 <a href="shop.html">Shop</a>
-<a href="cart.html">Cart</a>
+<a href="cart.html">Cart <span class="cart-count">0</span></a>
 </nav>
 </header>
 
 <main class="hero fade">
 <div>
 <h1>Move<br>Different.</h1>
-<p>Premium Under Armour & Umbro essentials. Built for training, sport and everyday movement.</p>
+<p>Premium Under Armour & Umbro essentials. Built for training, football and everyday movement.</p>
 <a class="btn" href="shop.html">Explore Collection ↗</a>
 </div>
 </main>
 
 <section class="section">
-<h2>Featured Sportswear</h2>
-<p>Performance pieces selected for athletes and everyday wear.</p>
+<h2>Shop By Brand</h2>
+<p>Performance gear from iconic sportswear brands.</p>
 <div class="grid">
-<div class="card"><h3>Under Armour</h3><p>Training gear and performance clothing.</p></div>
-<div class="card"><h3>Umbro</h3><p>Classic football-inspired essentials.</p></div>
-<div class="card"><h3>New Drops</h3><p>Fresh arrivals coming soon.</p></div>
+<a class="card brand-card fade" href="shop.html?brand=Under%20Armour">
+<h3>Under Armour</h3>
+<p>Training equipment, performance clothing and modern athletic essentials.</p>
+<span>View Collection →</span>
+</a>
+
+<a class="card brand-card fade" href="shop.html?brand=Umbro">
+<h3>Umbro</h3>
+<p>Football-inspired designs with a classic sporting identity.</p>
+<span>View Collection →</span>
+</a>
+
+<a class="card brand-card fade" href="shop.html">
+<h3>New Arrivals</h3>
+<p>Fresh drops and latest additions to the collection.</p>
+<span>Explore Drops →</span>
+</a>
 </div>
 </section>
 
-<script src="assets/js/supabase-client.js"></script>
+<section class="section feature-banner">
+<h2>Built For Every Session</h2>
+<p>From intense training to daily wear, IssamExprec brings together comfort, performance and style.</p>
+<a class="btn" href="shop.html">Shop Everything</a>
+</section>
+
+<script src="assets/js/store.js"></script>
 </body>
 </html>
