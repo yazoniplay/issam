@@ -2,34 +2,32 @@
 <html>
 <head>
 <title>IssamExprec | Cart</title>
-<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="assets/css/style.css">
 </head>
 <body>
-<header><a class="logo" href="index.html">IssamExprec</a><nav><a href="shop.html">Shop</a><a href="cart.html">Cart</a></nav></header>
+<header class="navbar">
+<a class="logo" href="index.html">IssamExprec</a>
+<nav><a href="shop.html">Shop</a><a href="cart.html">Cart</a></nav>
+</header>
+
 <main class="cart-page">
 <section class="title">
 <h1>Your Shopping Bag</h1>
 <p>Review your sportswear before checkout.</p>
 <button class="btn" onclick="openDrawer()">Open Cart Preview</button>
 </section>
+
 <div id="cart" class="products"></div>
 <a class="btn" href="checkout.html">Continue to Checkout</a>
 </main>
-<div class="drawer-overlay" id="overlay" onclick="closeDrawer()"></div>
+
+<div class="drawer-overlay" id="overlay"></div>
 <aside class="cart-drawer" id="drawer">
 <h2>Your Cart</h2>
 <div id="drawer-items"></div>
 <a class="btn" href="checkout.html">Checkout</a>
 </aside>
-<script>
-const items=JSON.parse(localStorage.getItem('cart')||'[]');
-const cart=document.getElementById('cart');
-const drawerItems=document.getElementById('drawer-items');
-const markup=items.length?items.map(p=>`<article class="card"><img src="${p.image_url||p.image||''}"><h2>${p.name}</h2><p>${p.brand||''}</p><p>${p.quantity||1} x ${p.price} SEK</p></article>`).join(''):'<h2>Your cart is empty</h2>';
-cart.innerHTML=markup;
-drawerItems.innerHTML=markup;
-function openDrawer(){document.getElementById('drawer').classList.add('active');document.getElementById('overlay').classList.add('active');document.body.classList.add('drawer-open')}
-function closeDrawer(){document.getElementById('drawer').classList.remove('active');document.getElementById('overlay').classList.remove('active');document.body.classList.remove('drawer-open')}
-</script>
+
+<script src="assets/js/store.js"></script>
 </body>
 </html>
